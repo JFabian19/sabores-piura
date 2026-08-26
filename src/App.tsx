@@ -560,6 +560,17 @@ export default function App() {
       {/* 🍽️ MAIN MENU CONTENT */}
       <main className="max-w-4xl mx-auto px-4 mt-6">
         
+        {/* ℹ️ Disclaimer general */}
+        <div className="flex items-center justify-between pb-3 mb-2 text-slate-400 text-xs border-b border-slate-200/60">
+          <span className="flex items-center gap-1">
+            <Utensils size={13} className="text-[#0284C7]" />
+            Nuestra Carta Digital
+          </span>
+          <span className="italic text-[11px] text-slate-400 font-medium">
+            * Imágenes referenciales
+          </span>
+        </div>
+        
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400">
             <Loader2 className="animate-spin text-[#0284C7] mb-3" size={40} />
@@ -635,6 +646,9 @@ export default function App() {
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
                               <ZoomIn size={22} className="text-white drop-shadow-md" />
                             </div>
+                            <span className="absolute bottom-1 right-1.5 text-[9px] text-white/80 bg-black/40 backdrop-blur-xs px-1.5 py-0.2 rounded font-medium">
+                              Foto referencial
+                            </span>
                           </>
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-50">
@@ -1429,6 +1443,7 @@ export default function App() {
               <div className="p-4 bg-white text-center">
                 <h4 className="font-bold text-slate-800 text-base">{selectedImage.title}</h4>
                 <p className="text-xs text-slate-500 mt-0.5">Picantería Sabores de Piura</p>
+                <p className="text-[10px] text-slate-400 italic mt-1.5">* Imagen referencial</p>
               </div>
             </motion.div>
           </div>
