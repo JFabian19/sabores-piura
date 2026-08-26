@@ -1,10 +1,18 @@
+export interface DishOption {
+  nombre: string;
+  precio: string;
+  descripcion?: string;
+}
+
 export interface Dish {
+  id?: string;
   nombre: string;
   descripcion?: string;
   imagen?: string;
   precio: string;
   destacado?: boolean;
   etiqueta?: string;
+  opciones?: DishOption[];
 }
 
 export interface Category {
@@ -22,6 +30,30 @@ export const DEFAULT_MENU_DATA: Category[] = [
     icono: "🐟",
     subtitulo: "Frescura marina con auténtico limón norteño y ají limo",
     items: [
+      {
+        nombre: "Ceviche de Cabrillón",
+        descripcion: "Fresco y selecto cabrillón en dados, marinado al instante con limón de Chulucanas, ají limo, camote glaseado, choclo y canchita chulpi.",
+        precio: "S/. 80.00",
+        destacado: true,
+        etiqueta: "Pescado Fino",
+        imagen: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "Personal", precio: "S/. 80.00" },
+          { nombre: "Media Fuente", precio: "S/. 150.00" }
+        ]
+      },
+      {
+        nombre: "Ceviche de Corvina",
+        descripcion: "Corvina fresca marinada al instante con zumo de limón norteño, ají limo, cebolla morada crujiente, choclo desgranado y camote.",
+        precio: "S/. 55.00",
+        destacado: true,
+        etiqueta: "Pescado Fino",
+        imagen: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "Personal", precio: "S/. 55.00" },
+          { nombre: "Media Fuente", precio: "S/. 109.00" }
+        ]
+      },
       {
         nombre: "Ceviche de Pescado del Día",
         descripcion: "Pescado fresco del día cortado en dados, marinado con limón norteño al instante, ají limo, cebolla roja, camote glaseado, choclo y canchita chulpi.",
@@ -73,6 +105,17 @@ export const DEFAULT_MENU_DATA: Category[] = [
     icono: "🍤",
     subtitulo: "Frituras crocantes y doradas acompañadas de yucas y sarsa criolla",
     items: [
+      {
+        nombre: "Chicharrón de Calamar",
+        descripcion: "Crocantes aros de calamar fresco rebozados y fritos al punto dorado, acompañados de yucas fritas, chifles y abundante salsa tártara casera.",
+        precio: "S/. 70.00",
+        destacado: true,
+        etiqueta: "Personal",
+        imagen: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "Personal", precio: "S/. 70.00" }
+        ]
+      },
       {
         nombre: "Chicharrón de Pescado",
         descripcion: "Trozos de pescado blanco marinados y fritos al punto crocante, acompañados de yucas doradas, salsa tártara y ensalada criolla norteña.",
@@ -265,15 +308,35 @@ export const DEFAULT_MENU_DATA: Category[] = [
     subtitulo: "Guisados a fuego lento con chicha de jora, ajíes y hierbas aromáticas",
     items: [
       {
-        nombre: "Sudado de Filete",
-        descripcion: "Filete de pescado cocinado en su propio jugo con chicha de jora, tomate, cebolla, ají amarillo, culantro y yuca sancochada.",
-        precio: "S/. 30.00",
-        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        nombre: "Sudado de Cabrillón",
+        descripcion: "Exquisito cabrillón cocinado a fuego lento en su propio jugo con chicha de jora, tomate, cebolla en gajos, ají amarillo y yucas tiernas.",
+        precio: "S/. 90.00",
+        destacado: true,
+        etiqueta: "Especialidad",
+        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "Personal", precio: "S/. 90.00" },
+          { nombre: "Media Fuente", precio: "S/. 170.00" }
+        ]
       },
       {
-        nombre: "Sudado de Caballa",
-        descripcion: "Caballa fresca sudada con aderezo norteño, chicha de jora, cebolla en gajos, tomate y yucas tiernas.",
-        precio: "S/. 30.00",
+        nombre: "Sudado de Corvina",
+        descripcion: "Jugosa corvina cocinada al vapor en aderezo criollo picantero, chicha de jora, ajíes y yucas sancochadas.",
+        precio: "S/. 70.00",
+        destacado: true,
+        etiqueta: "Pescado Fino",
+        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "Personal", precio: "S/. 70.00" },
+          { nombre: "Media Fuente", precio: "S/. 130.00" }
+        ]
+      },
+      {
+        nombre: "Sudado de Cabrilla",
+        descripcion: "Exquisita cabrilla entera sudada en aderezo de la casa, chicha de jora, tomate, ají amarillo y yucas sancochadas.",
+        precio: "S/. 35.00",
+        destacado: true,
+        etiqueta: "Recomendado",
         imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
       },
       {
@@ -284,11 +347,15 @@ export const DEFAULT_MENU_DATA: Category[] = [
         imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
       },
       {
-        nombre: "Sudado de Cabrilla",
-        descripcion: "Exquisita cabrilla entera sudada en aderezo de la casa, chicha de jora, tomate, ají amarillo y yucas sancochadas.",
-        precio: "S/. 35.00",
-        destacado: true,
-        etiqueta: "Recomendado",
+        nombre: "Sudado de Filete",
+        descripcion: "Filete de pescado cocinado en su propio jugo con chicha de jora, tomate, cebolla, ají amarillo, culantro y yuca sancochada.",
+        precio: "S/. 30.00",
+        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        nombre: "Sudado de Caballa",
+        descripcion: "Caballa fresca sudada con aderezo norteño, chicha de jora, cebolla en gajos, tomate y yucas tiernas.",
+        precio: "S/. 30.00",
         imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
       }
     ]
@@ -300,39 +367,18 @@ export const DEFAULT_MENU_DATA: Category[] = [
     subtitulo: "Sopas marinas concentradas y revitalizantes",
     items: [
       {
-        nombre: "Parihuela de Filete",
-        descripcion: "Sustancioso caldo marino a base de filete de pescado, mixtura de mariscos, cangrejo, chicha de jora y ajíes peruanos.",
-        precio: "S/. 30.00",
-        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
-      },
-      {
         nombre: "Parihuela de Cabrilla",
         descripcion: "La reina de las parihuelas: cabrilla entera con mariscos surtidos, cangrejo y toque secreto de pisco y chicha.",
         precio: "S/. 40.00",
         destacado: true,
         etiqueta: "Levanta Muertos",
         imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
-      }
-    ]
-  },
-  {
-    id: "pasaditos",
-    nombre: "Pasaditos",
-    icono: "🌊",
-    subtitulo: "Especialidad tradicional de la costa de Piura",
-    items: [
-      {
-        nombre: "Pasadito de Caballa por Agua",
-        descripcion: "Auténtica receta piurana: caballa fresca pasada suavemente por agua caliente aromatizada con hierbas, servida con yucas, zarandaja, limón y ají.",
-        precio: "S/. 35.00",
-        etiqueta: "Picantero",
-        imagen: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
       },
       {
-        nombre: "Pasadito de Cabrilla",
-        descripcion: "Cabrilla fresca cocinada suavemente al vapor aromatizado, acompañada de yuca cocida, salsa de cebolla con limón y ají limo.",
-        precio: "S/. 35.00",
-        imagen: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
+        nombre: "Parihuela de Filete",
+        descripcion: "Sustancioso caldo marino a base de filete de pescado, mixtura de mariscos, cangrejo, chicha de jora y ajíes peruanos.",
+        precio: "S/. 30.00",
+        imagen: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
       }
     ]
   },
@@ -388,6 +434,30 @@ export const DEFAULT_MENU_DATA: Category[] = [
         destacado: true,
         etiqueta: "El Más Pedido",
         imagen: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+      }
+    ]
+  },
+  {
+    id: "menu-ninos",
+    nombre: "Menú Niños",
+    icono: "🧒",
+    subtitulo: "Platos ricos pensados especialmente para los engreídos de la casa",
+    items: [
+      {
+        nombre: "Combo Niños: Nuggets + Papas Fritas",
+        descripcion: "Crujientes nuggets de pollo acompañados de generosa porción de papas fritas doraditas y cremas.",
+        precio: "S/. 12.00",
+        destacado: true,
+        etiqueta: "Combo Niños",
+        imagen: "https://images.unsplash.com/photo-1562967914-608f82629710?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        nombre: "Arroz a la Cubana",
+        descripcion: "Arroz blanco bien graneado acompañado de huevos fritos montados y plátanos fritos dulces.",
+        precio: "S/. 12.00",
+        destacado: true,
+        etiqueta: "Favorito Niños",
+        imagen: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80"
       }
     ]
   },
@@ -455,6 +525,27 @@ export const DEFAULT_MENU_DATA: Category[] = [
         destacado: true,
         etiqueta: "Fuente Grande",
         imagen: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80"
+      }
+    ]
+  },
+  {
+    id: "pasaditos",
+    nombre: "Pasaditos",
+    icono: "🌊",
+    subtitulo: "Especialidad tradicional de la costa de Piura",
+    items: [
+      {
+        nombre: "Pasadito de Caballa por Agua",
+        descripcion: "Auténtica receta piurana: caballa fresca pasada suavemente por agua caliente aromatizada con hierbas, servida con yucas, zarandaja, limón y ají.",
+        precio: "S/. 35.00",
+        etiqueta: "Picantero",
+        imagen: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        nombre: "Pasadito de Cabrilla",
+        descripcion: "Cabrilla fresca cocinada suavemente al vapor aromatizado, acompañada de yuca cocida, salsa de cebolla con limón y ají limo.",
+        precio: "S/. 35.00",
+        imagen: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
       }
     ]
   },
@@ -556,25 +647,38 @@ export const DEFAULT_MENU_DATA: Category[] = [
     subtitulo: "Chichas tradicionales norteñas, cervezas heladas y refrescos",
     items: [
       {
-        nombre: "Chicha Morada 1 Lt.",
-        descripcion: "Jarra de 1 Litro de deliciosa chicha morada artesanal preparada con maíz morado, piña, manzana, canela y clavo.",
-        precio: "S/. 8.00",
+        nombre: "Gaseosa Descartable",
+        descripcion: "Inca Kola, Coca Cola, Sprite o Fanta bien heladas. Elige el tamaño que prefieras.",
+        precio: "S/. 5.00",
+        destacado: true,
+        etiqueta: "Variedad",
+        imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80",
+        opciones: [
+          { nombre: "1/2 Litro (500ml)", precio: "S/. 5.00" },
+          { nombre: "1 Litro", precio: "S/. 9.00" },
+          { nombre: "1.5 Litros", precio: "S/. 12.00" }
+        ]
+      },
+      {
+        nombre: "Chicha Morada de Maíz 1 Lt.",
+        descripcion: "Jarra de 1 Litro de deliciosa chicha morada artesanal preparada con maíz morado, piña, manzana, canela y clavo de olor.",
+        precio: "S/. 10.00",
         destacado: true,
         etiqueta: "Casera",
         imagen: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
       },
       {
-        nombre: "Chicha de Jora 1 Lt.",
-        descripcion: "Jarra de 1 Litro de tradicional chicha de jora piurana fermentada en olla de barro, fresca y aromática.",
-        precio: "S/. 8.00",
+        nombre: "Chicha de Jora Piurana 1 Lt.",
+        descripcion: "Jarra de 1 Litro de auténtica chicha de jora piurana fermentada en olla de barro, fresca, aromática y tradicional.",
+        precio: "S/. 10.00",
         destacado: true,
         etiqueta: "Tradición Piurana",
         imagen: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
       },
       {
         nombre: "Clarito Helado 1 Lt.",
-        descripcion: "Jarra de 1 Litro del famoso clarito piurano helado, la esencia más suave y refrescante de la chicha de jora.",
-        precio: "S/. 8.00",
+        descripcion: "Jarra de 1 Litro del famoso clarito piurano helado, la esencia más suave, dulce y refrescante de la chicha de jora.",
+        precio: "S/. 10.00",
         destacado: true,
         etiqueta: "Típico de Piura",
         imagen: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
@@ -590,18 +694,6 @@ export const DEFAULT_MENU_DATA: Category[] = [
         descripcion: "Botella de Cerveza Cristal heladita al polo para compartir con tus platos criollos y marinos.",
         precio: "S/. 8.50",
         imagen: "https://images.unsplash.com/photo-1608270174093-16a75066a506?w=600&auto=format&fit=crop&q=80"
-      },
-      {
-        nombre: "Gaseosa Personal",
-        descripcion: "Botella personal de 500ml (Inca Kola, Coca Cola, Sprite o Fanta) bien helada.",
-        precio: "S/. 4.00",
-        imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80"
-      },
-      {
-        nombre: "Gaseosa de 1 Lt.",
-        descripcion: "Botella de 1 Litro de Inca Kola o Coca Cola bien helada.",
-        precio: "S/. 9.00",
-        imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80"
       },
       {
         nombre: "Agua Mineral",

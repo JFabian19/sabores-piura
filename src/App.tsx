@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ShoppingBag, Plus, Minus, ChevronRight, X, Trash2, Utensils, 
-  MapPin, Loader2, Gift, Star, Phone, Sparkles, ZoomIn, Search,
-  Clock, Heart, Share2, CheckCircle2, ChevronLeft, BookOpen, Flame
+  MapPin, Loader2, Gift, Star, Phone, Sparkles, ZoomIn,
+  Clock, Heart, Share2, CheckCircle2, ChevronLeft, BookOpen, Flame,
+  Layers, Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { fetchSheetData, submitSheetData, SheetDish, SheetCategory, SHEET_ID } from './services/googleSheets';
-import { DEFAULT_MENU_DATA, Category, Dish } from './data/menuData';
+import { DEFAULT_MENU_DATA, Category, Dish, DishOption } from './data/menuData';
 
 // ==========================================
 // 📋 CONFIGURACIÓN DE SABORES DE PIURA
@@ -31,6 +32,7 @@ const PHYSICAL_MENU_PAGES = [
 
 interface CartItem {
   nombre: string;
+  opcion?: string;
   precio: string;
   cantidad: number;
 }
@@ -41,9 +43,12 @@ export default function App() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>(DEFAULT_MENU_DATA[0]?.id || "ceviches");
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedImage, setSelectedImage] = useState<{ src: string; title: string } | null>(null);
   
+  // Estado para modal de opciones múltiples
+  const [selectedDishForOptions, setSelectedDishForOptions] = useState<Dish | null>(null);
+  const [optionQuantities, setOptionQuantities] = useState<{ [optionName: string]: number }>({});
+
   // Estado para visualizador de carta física original
   const [showPhysicalMenu, setShowPhysicalMenu] = useState(false);
   const [activePhysicalPage, setActivePhysicalPage] = useState(0);
@@ -123,25 +128,35 @@ export default function App() {
 
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.cantidad, 0), [cart]);
 
-  const addToCart = (dish: Dish) => {
+  const addToCart = (dish: Dish, opcion?: DishOption) => {
+    if (dish.opciones && dish.opciones.length > 1 && !opcion) {
+      handleOpenOptionsModal(dish);
+      return;
+    }
+
+    const opt = opcion || (dish.opciones && dish.opciones.length === 1 ? dish.opciones[0] : undefined);
+    const itemNombre = dish.nombre;
+    const itemOpcion = opt?.nombre;
+    const itemPrecio = opt?.precio || dish.precio;
+
     setCart(prev => {
-      const existing = prev.find(i => i.nombre === dish.nombre && i.precio === dish.precio);
+      const existing = prev.find(i => i.nombre === itemNombre && i.opcion === itemOpcion && i.precio === itemPrecio);
       if (existing) {
         return prev.map(i =>
-          (i.nombre === dish.nombre && i.precio === dish.precio)
+          (i.nombre === itemNombre && i.opcion === itemOpcion && i.precio === itemPrecio)
             ? { ...i, cantidad: i.cantidad + 1 }
             : i
         );
       }
-      return [...prev, { nombre: dish.nombre, precio: dish.precio, cantidad: 1 }];
+      return [...prev, { nombre: itemNombre, opcion: itemOpcion, precio: itemPrecio, cantidad: 1 }];
     });
   };
 
-  const updateQuantity = (nombre: string, precio: string, delta: number) => {
+  const updateQuantity = (nombre: string, precio: string, delta: number, opcion?: string) => {
     setCart(prev =>
       prev
         .map(i => {
-          if (i.nombre === nombre && i.precio === precio) {
+          if (i.nombre === nombre && i.precio === precio && i.opcion === opcion) {
             const newQty = i.cantidad + delta;
             return newQty > 0 ? { ...i, cantidad: newQty } : null;
           }
@@ -151,9 +166,59 @@ export default function App() {
     );
   };
 
-  const getItemQuantity = (dish: Dish) => {
-    const item = cart.find(i => i.nombre === dish.nombre && i.precio === dish.precio);
-    return item ? item.cantidad : 0;
+  const getDishTotalQuantity = (dish: Dish) => {
+    return cart
+      .filter(i => i.nombre === dish.nombre)
+      .reduce((sum, item) => sum + item.cantidad, 0);
+  };
+
+  const handleOpenOptionsModal = (dish: Dish) => {
+    const currentCounts: { [optionName: string]: number } = {};
+    if (dish.opciones) {
+      dish.opciones.forEach(opt => {
+        const found = cart.find(i => i.nombre === dish.nombre && i.opcion === opt.nombre && i.precio === opt.precio);
+        currentCounts[opt.nombre] = found ? found.cantidad : 0;
+      });
+    }
+    setOptionQuantities(currentCounts);
+    setSelectedDishForOptions(dish);
+  };
+
+  const handleConfirmOptions = () => {
+    if (!selectedDishForOptions || !selectedDishForOptions.opciones) return;
+    
+    const dish = selectedDishForOptions;
+    setCart(prev => {
+      // Remover variantes existentes de este plato
+      let updated = prev.filter(i => i.nombre !== dish.nombre);
+      
+      // Agregar todas las opciones seleccionadas con cantidad > 0
+      dish.opciones!.forEach(opt => {
+        const qty = optionQuantities[opt.nombre] || 0;
+        if (qty > 0) {
+          updated.push({
+            nombre: dish.nombre,
+            opcion: opt.nombre,
+            precio: opt.precio,
+            cantidad: qty
+          });
+        }
+      });
+      
+      return updated;
+    });
+
+    setSelectedDishForOptions(null);
+  };
+
+  const calculateOptionModalTotal = () => {
+    if (!selectedDishForOptions || !selectedDishForOptions.opciones) return 0;
+    return selectedDishForOptions.opciones.reduce((total, opt) => {
+      const qty = optionQuantities[opt.nombre] || 0;
+      const cleanPrice = opt.precio.replace(/^[^\d.]*/, '');
+      const num = parseFloat(cleanPrice) || 0;
+      return total + num * qty;
+    }, 0);
   };
 
   const calculateTotal = () => {
@@ -180,7 +245,8 @@ export default function App() {
 
     message += `📝 *DETALLE DEL PEDIDO:*\n`;
     cart.forEach(item => {
-      message += `• ${item.cantidad}x ${item.nombre} (${item.precio})\n`;
+      const opcionTag = item.opcion ? ` [${item.opcion}]` : '';
+      message += `• ${item.cantidad}x ${item.nombre}${opcionTag} (${item.precio})\n`;
     });
 
     if (orderNotes.trim()) {
@@ -203,26 +269,6 @@ export default function App() {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
-
-  const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return categories;
-    const query = searchQuery.toLowerCase().trim();
-
-    return categories
-      .map(cat => {
-        const matchingDishes = cat.items.filter(
-          dish =>
-            dish.nombre.toLowerCase().includes(query) ||
-            (dish.descripcion && dish.descripcion.toLowerCase().includes(query)) ||
-            (dish.etiqueta && dish.etiqueta.toLowerCase().includes(query))
-        );
-        return {
-          ...cat,
-          items: matchingDishes
-        };
-      })
-      .filter(cat => cat.items.length > 0);
-  }, [categories, searchQuery]);
 
   const handleBirthdaySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -380,41 +426,18 @@ export default function App() {
         </div>
       </header>
 
-      {/* 🔍 STICKY SEARCH & CATEGORY BAR */}
+      {/* 🧭 STICKY CATEGORY BAR */}
       <div className="sticky top-0 z-30 bg-[#FDFBF7]/95 backdrop-blur-md shadow-md border-b border-amber-200/50">
-        <div className="max-w-4xl mx-auto px-4 pt-3 pb-2">
+        <div className="max-w-4xl mx-auto px-4 py-2.5">
           
-          {/* Search Box */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar ceviche, seco de chabelo, arroz con pato, cabrilla..."
-              className="w-full pl-10 pr-10 py-2.5 bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0284C7] focus:border-transparent text-sm shadow-inner transition-all placeholder:text-slate-400"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-
           {/* Category Tabs Horizontal Scroll */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
             {categories.map((cat) => {
-              const isActive = activeCategory === cat.id && !searchQuery;
+              const isActive = activeCategory === cat.id;
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    setSearchQuery('');
-                    scrollToCategory(cat.id);
-                  }}
+                  onClick={() => scrollToCategory(cat.id)}
                   className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 ${
                     isActive
                       ? 'bg-gradient-to-r from-[#0284C7] to-[#0369A1] text-white shadow-md shadow-sky-500/20 scale-105'
@@ -444,22 +467,8 @@ export default function App() {
             <Loader2 className="animate-spin text-[#0284C7] mb-3" size={40} />
             <p className="text-sm font-medium">Cargando la carta marina...</p>
           </div>
-        ) : filteredCategories.length === 0 ? (
-          <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-slate-200 mt-4">
-            <Utensils className="mx-auto text-slate-300 mb-3" size={48} />
-            <h3 className="text-lg font-bold text-slate-800">No encontramos resultados</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              No hay platos que coincidan con "<span className="font-semibold text-slate-700">{searchQuery}</span>". Prueba buscando otro plato o revisa las categorías.
-            </p>
-            <button
-              onClick={() => setSearchQuery('')}
-              className="mt-4 bg-[#0284C7] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md"
-            >
-              Ver toda la carta
-            </button>
-          </div>
         ) : (
-          filteredCategories.map((category) => (
+          categories.map((category) => (
             <section 
               key={category.id} 
               id={`cat-${category.id}`} 
@@ -484,7 +493,8 @@ export default function App() {
               {/* Dish Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {category.items.map((dish, idx) => {
-                  const qty = getItemQuantity(dish);
+                  const hasMultipleOptions = Boolean(dish.opciones && dish.opciones.length > 1);
+                  const totalQty = getDishTotalQuantity(dish);
 
                   return (
                     <motion.div
@@ -524,9 +534,28 @@ export default function App() {
                             </p>
                           )}
 
+                          {/* Options pills preview if dish has multiple options */}
+                          {hasMultipleOptions && dish.opciones && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {dish.opciones.map((opt, oIdx) => (
+                                <button
+                                  key={oIdx}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenOptionsModal(dish);
+                                  }}
+                                  className="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-800 font-semibold px-2 py-0.5 rounded-lg border border-sky-200 cursor-pointer transition-colors text-left"
+                                >
+                                  {opt.nombre}: <span className="font-bold text-[#0369A1]">{opt.precio}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+
                           <div className="mt-2.5 flex items-baseline gap-2">
                             <span className="text-lg font-black text-[#0369A1] font-dish">
-                              {dish.precio}
+                              {hasMultipleOptions ? `Desde ${dish.opciones![0].precio}` : dish.precio}
                             </span>
                           </div>
                         </div>
@@ -553,19 +582,34 @@ export default function App() {
                       {/* Action Buttons / Add to Cart */}
                       <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span className="text-[11px] text-slate-400 font-medium">
-                          {dish.destacado ? '⭐ Muy solicitado' : 'Sabor del norte'}
+                          {dish.destacado ? '⭐ Muy solicitado' : (hasMultipleOptions ? 'Porciones a elegir' : 'Sabor del norte')}
                         </span>
 
-                        {qty > 0 ? (
+                        {hasMultipleOptions ? (
+                          <div className="flex items-center gap-2">
+                            {totalQty > 0 && (
+                              <span className="text-xs font-black text-[#0284C7] bg-sky-50 px-2 py-1 rounded-lg border border-sky-200">
+                                {totalQty} en pedido
+                              </span>
+                            )}
+                            <button
+                              onClick={() => handleOpenOptionsModal(dish)}
+                              className="flex items-center gap-1.5 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
+                            >
+                              <Plus size={14} />
+                              <span>{totalQty > 0 ? 'Modificar / +' : 'Elegir opción'}</span>
+                            </button>
+                          </div>
+                        ) : totalQty > 0 ? (
                           <div className="flex items-center gap-2 bg-sky-50 border border-sky-200 rounded-xl p-1 shadow-sm">
                             <button
-                              onClick={() => updateQuantity(dish.nombre, dish.precio, -1)}
+                              onClick={() => updateQuantity(dish.nombre, (dish.opciones?.[0]?.precio || dish.precio), -1, dish.opciones?.[0]?.nombre)}
                               className="w-7 h-7 rounded-lg bg-white text-[#0284C7] hover:bg-sky-100 flex items-center justify-center font-bold shadow-xs transition-colors"
                             >
                               <Minus size={14} />
                             </button>
                             <span className="text-sm font-bold text-[#0369A1] min-w-[20px] text-center">
-                              {qty}
+                              {totalQty}
                             </span>
                             <button
                               onClick={() => addToCart(dish)}
@@ -675,15 +719,22 @@ export default function App() {
                   </div>
                 ) : (
                   cart.map((item, idx) => (
-                    <div key={idx} className="py-3 flex items-center justify-between gap-3">
+                    <div key={`${item.nombre}-${item.opcion || 'def'}-${idx}`} className="py-3 flex items-center justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-slate-800 text-sm truncate">{item.nombre}</h4>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="font-bold text-slate-800 text-sm">{item.nombre}</h4>
+                          {item.opcion && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
+                              {item.opcion}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-xs text-[#0284C7] font-semibold">{item.precio}</span>
                       </div>
 
                       <div className="flex items-center gap-2 bg-slate-100 rounded-xl p-1">
                         <button
-                          onClick={() => updateQuantity(item.nombre, item.precio, -1)}
+                          onClick={() => updateQuantity(item.nombre, item.precio, -1, item.opcion)}
                           className="w-6 h-6 rounded-lg bg-white text-slate-700 hover:bg-red-50 hover:text-red-600 flex items-center justify-center font-bold shadow-xs transition-colors"
                         >
                           <Minus size={12} />
@@ -692,7 +743,7 @@ export default function App() {
                           {item.cantidad}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.nombre, item.precio, 1)}
+                          onClick={() => updateQuantity(item.nombre, item.precio, 1, item.opcion)}
                           className="w-6 h-6 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
                         >
                           <Plus size={12} />
@@ -700,7 +751,7 @@ export default function App() {
                       </div>
 
                       <button
-                        onClick={() => updateQuantity(item.nombre, item.precio, -item.cantidad)}
+                        onClick={() => updateQuantity(item.nombre, item.precio, -item.cantidad, item.opcion)}
                         className="text-slate-400 hover:text-red-500 p-1 transition-colors"
                       >
                         <Trash2 size={16} />
@@ -792,6 +843,169 @@ export default function App() {
                   </button>
                 </div>
               )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 🍲 MODAL DE OPCIONES MÚLTIPLES DE PORCIÓN */}
+      <AnimatePresence>
+        {selectedDishForOptions && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedDishForOptions(null)}
+              className="fixed inset-0 bg-black/65 backdrop-blur-xs"
+            />
+
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl z-10 max-h-[90vh] flex flex-col overflow-hidden"
+            >
+              {/* Header */}
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-[#0369A1] to-[#0284C7] text-white">
+                <div className="flex items-center gap-2">
+                  <Layers size={20} className="text-amber-300" />
+                  <div>
+                    <h3 className="font-bold text-base leading-tight">Opciones del Plato</h3>
+                    <p className="text-[11px] text-sky-100">Selecciona tu presentación</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedDishForOptions(null)}
+                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 overflow-y-auto flex-1 space-y-4">
+                {/* Dish preview */}
+                <div className="flex gap-3.5 items-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                  {selectedDishForOptions.imagen && (
+                    <img
+                      src={selectedDishForOptions.imagen}
+                      alt={selectedDishForOptions.nombre}
+                      className="w-16 h-16 rounded-xl object-cover shadow-xs flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-extrabold text-slate-900 text-base leading-snug">
+                      {selectedDishForOptions.nombre}
+                    </h4>
+                    {selectedDishForOptions.descripcion && (
+                      <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">
+                        {selectedDishForOptions.descripcion}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Elige porciones / presentaciones:
+                    </span>
+                    <span className="text-[11px] font-semibold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-md border border-sky-200">
+                      Opción Múltiple
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {selectedDishForOptions.opciones?.map((opcion, idx) => {
+                      const count = optionQuantities[opcion.nombre] || 0;
+
+                      return (
+                        <div
+                          key={idx}
+                          className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                            count > 0 
+                              ? 'bg-sky-50/80 border-[#0284C7] shadow-xs ring-1 ring-[#0284C7]/30' 
+                              : 'bg-white border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-slate-900 text-sm">
+                                {opcion.nombre}
+                              </span>
+                              {count > 0 && (
+                                <span className="bg-[#0284C7] text-white text-[10px] font-black px-1.5 py-0.2 rounded-md">
+                                  {count} en pedido
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm font-black text-[#0369A1] mt-0.5">
+                              {opcion.precio}
+                            </div>
+                          </div>
+
+                          {/* Stepper for this option */}
+                          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1 shadow-xs">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOptionQuantities(prev => ({
+                                  ...prev,
+                                  [opcion.nombre]: Math.max(0, (prev[opcion.nombre] || 0) - 1)
+                                }));
+                              }}
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold transition-colors ${
+                                count > 0
+                                  ? 'bg-slate-100 text-slate-700 hover:bg-red-50 hover:text-red-600'
+                                  : 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                              }`}
+                              disabled={count <= 0}
+                            >
+                              <Minus size={14} />
+                            </button>
+                            <span className="text-sm font-bold text-slate-800 min-w-[22px] text-center">
+                              {count}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOptionQuantities(prev => ({
+                                  ...prev,
+                                  [opcion.nombre]: (prev[opcion.nombre] || 0) + 1
+                                }));
+                              }}
+                              className="w-7 h-7 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
+                            >
+                              <Plus size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer with Subtotal & Confirm Button */}
+              <div className="p-4 bg-slate-50 border-t border-slate-100 space-y-3">
+                <div className="flex items-center justify-between text-sm font-bold text-slate-700">
+                  <span>Subtotal selección:</span>
+                  <span className="text-base font-black text-[#0369A1]">
+                    S/. {calculateOptionModalTotal().toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleConfirmOptions()}
+                  className="w-full bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#075985] hover:from-[#0369A1] hover:to-[#075985] text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-sky-600/20 active:scale-98 transition-all"
+                >
+                  <Check size={18} />
+                  <span>Confirmar Selección</span>
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
