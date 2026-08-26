@@ -38,6 +38,13 @@ interface CartItem {
   cantidad: number;
 }
 
+export const parsePrice = (priceVal: string | number | undefined): number => {
+  if (typeof priceVal === 'number') return priceVal;
+  if (!priceVal) return 0;
+  const match = priceVal.toString().match(/(\d+(\.\d+)?)/);
+  return match ? parseFloat(match[1]) : 0;
+};
+
 export default function App() {
   const [categories, setCategories] = useState<Category[]>(DEFAULT_MENU_DATA);
   const [loading, setLoading] = useState(false);
@@ -60,10 +67,15 @@ export default function App() {
   const [showPhysicalMenu, setShowPhysicalMenu] = useState(false);
   const [activePhysicalPage, setActivePhysicalPage] = useState(0);
 
-  // Formulario de pedido
-  const [orderType, setOrderType] = useState<'delivery' | 'llevar' | 'mesa'>('delivery');
+  // Estados para Modal de Checkout / Finalizar Pedido
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [orderType, setOrderType] = useState<'delivery' | 'tienda'>('delivery');
+  const [paymentMethod, setPaymentMethod] = useState<'yape' | 'visa' | 'mastercard' | 'efectivo'>('yape');
   const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
+  const [customerGpsLocation, setCustomerGpsLocation] = useState<string | null>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [orderNotes, setOrderNotes] = useState('');
 
   // States for Birthday Form
@@ -181,10 +193,10 @@ export default function App() {
     const itemPrecio = opt?.precio || dish.precio;
 
     setCart(prev => {
-      const existing = prev.find(i => i.nombre === itemNombre && i.opcion === itemOpcion && i.precio === itemPrecio);
+      const existing = prev.find(i => i.nombre === itemNombre && i.opcion === itemOpcion);
       if (existing) {
         return prev.map(i =>
-          (i.nombre === itemNombre && i.opcion === itemOpcion && i.precio === itemPrecio)
+          (i.nombre === itemNombre && i.opcion === itemOpcion)
             ? { ...i, cantidad: i.cantidad + 1 }
             : i
         );
@@ -197,7 +209,7 @@ export default function App() {
     setCart(prev =>
       prev
         .map(i => {
-          if (i.nombre === nombre && i.precio === precio && i.opcion === opcion) {
+          if (i.nombre === nombre && i.opcion === opcion) {
             const newQty = i.cantidad + delta;
             return newQty > 0 ? { ...i, cantidad: newQty } : null;
           }
@@ -217,7 +229,7 @@ export default function App() {
     const currentCounts: { [optionName: string]: number } = {};
     if (dish.opciones) {
       dish.opciones.forEach(opt => {
-        const found = cart.find(i => i.nombre === dish.nombre && i.opcion === opt.nombre && i.precio === opt.precio);
+        const found = cart.find(i => i.nombre === dish.nombre && i.opcion === opt.nombre);
         currentCounts[opt.nombre] = found ? found.cantidad : 0;
       });
     }
@@ -256,18 +268,38 @@ export default function App() {
     if (!selectedDishForOptions || !selectedDishForOptions.opciones) return 0;
     return selectedDishForOptions.opciones.reduce((total, opt) => {
       const qty = optionQuantities[opt.nombre] || 0;
-      const cleanPrice = opt.precio.replace(/^[^\d.]*/, '');
-      const num = parseFloat(cleanPrice) || 0;
-      return total + num * qty;
+      const unitPrice = parsePrice(opt.precio);
+      return total + unitPrice * qty;
     }, 0);
   };
 
   const calculateTotal = () => {
     return cart.reduce((acc, item) => {
-      const cleanPrice = item.precio.replace(/^[^\d.]*/, '');
-      const num = parseFloat(cleanPrice) || 0;
-      return acc + num * item.cantidad;
+      const unitPrice = parsePrice(item.precio);
+      return acc + unitPrice * item.cantidad;
     }, 0);
+  };
+
+  const handleGetGpsLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Tu navegador no soporta geolocalización.");
+      return;
+    }
+    setIsGettingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+        setCustomerGpsLocation(mapsLink);
+        setIsGettingLocation(false);
+      },
+      (error) => {
+        console.warn("Error obteniendo ubicación:", error);
+        alert("No se pudo obtener la ubicación automáticamente. Puedes escribir tu dirección de referencia.");
+        setIsGettingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const sendToWhatsApp = () => {
@@ -277,21 +309,38 @@ export default function App() {
     if (customerName.trim()) {
       message += `👤 *Cliente:* ${customerName.trim()}\n`;
     }
+    if (customerPhone.trim()) {
+      message += `📞 *Teléfono:* ${customerPhone.trim()}\n`;
+    }
     
-    message += `📍 *Modalidad:* ${
-      orderType === 'delivery' ? `Delivery (${customerAddress || 'Por indicar'})` :
-      orderType === 'llevar' ? 'Para Llevar / Recojo en Local' :
-      `Consumo en Mesa (${customerAddress || 'Mesa por asignar'})`
-    }\n\n`;
+    message += `📍 *Modalidad:* ${orderType === 'delivery' ? '🛵 Delivery a domicilio' : '🏪 Recojo en Tienda (Av. Los Ficus 134)'}\n`;
+    
+    if (orderType === 'delivery') {
+      if (customerAddress.trim()) {
+        message += `🏠 *Dirección/Referencia:* ${customerAddress.trim()}\n`;
+      }
+      if (customerGpsLocation) {
+        message += `📍 *Ubicación GPS (Maps):* ${customerGpsLocation}\n`;
+      }
+    }
+
+    const paymentLabels: Record<string, string> = {
+      yape: '📱 Yape',
+      visa: '💳 Tarjeta Visa',
+      mastercard: '💳 Tarjeta Mastercard',
+      efectivo: '💵 Efectivo'
+    };
+    message += `💳 *Método de Pago:* ${paymentLabels[paymentMethod] || 'Efectivo'}\n\n`;
 
     message += `📝 *DETALLE DEL PEDIDO:*\n`;
     cart.forEach(item => {
       const opcionTag = item.opcion ? ` [${item.opcion}]` : '';
-      message += `• ${item.cantidad}x ${item.nombre}${opcionTag} (${item.precio})\n`;
+      const unitPrice = parsePrice(item.precio);
+      message += `• ${item.cantidad}x ${item.nombre}${opcionTag} - S/. ${(unitPrice * item.cantidad).toFixed(2)}\n`;
     });
 
     if (orderNotes.trim()) {
-      message += `\n💬 *Notas/Preferencias:* ${orderNotes.trim()}\n`;
+      message += `\n💬 *Notas / Indicaciones:* ${orderNotes.trim()}\n`;
     }
 
     message += `\n💵 *TOTAL A PAGAR: S/. ${total.toFixed(2)}*\n\n`;
@@ -723,7 +772,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* 📋 CART & CHECKOUT DRAWER MODAL */}
+      {/* 📋 CART DRAWER MODAL */}
       <AnimatePresence>
         {showSummary && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -748,7 +797,7 @@ export default function App() {
                   <ShoppingBag size={20} className="text-amber-300" />
                   <div>
                     <h3 className="font-bold text-base leading-tight">Tu Pedido</h3>
-                    <p className="text-[11px] text-sky-100">Picantería Sabores de Piura</p>
+                    <p className="text-[11px] text-sky-100">{cartCount} {cartCount === 1 ? 'plato seleccionado' : 'platos seleccionados'}</p>
                   </div>
                 </div>
                 <button
@@ -767,131 +816,321 @@ export default function App() {
                     <p className="text-sm">Tu pedido está vacío</p>
                   </div>
                 ) : (
-                  cart.map((item, idx) => (
-                    <div key={`${item.nombre}-${item.opcion || 'def'}-${idx}`} className="py-3 flex items-center justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="font-bold text-slate-800 text-sm">{item.nombre}</h4>
-                          {item.opcion && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
-                              {item.opcion}
-                            </span>
-                          )}
+                  cart.map((item, idx) => {
+                    const unitPrice = parsePrice(item.precio);
+                    const subtotalItem = unitPrice * item.cantidad;
+
+                    return (
+                      <div key={`${item.nombre}-${item.opcion || 'def'}-${idx}`} className="py-3 flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <h4 className="font-bold text-slate-800 text-sm">{item.nombre}</h4>
+                            {item.opcion && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
+                                {item.opcion}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs text-slate-500">{item.precio} c/u</span>
+                            <span className="text-xs font-black text-[#0284C7]">Subtotal: S/. {subtotalItem.toFixed(2)}</span>
+                          </div>
                         </div>
-                        <span className="text-xs text-[#0284C7] font-semibold">{item.precio}</span>
-                      </div>
 
-                      <div className="flex items-center gap-2 bg-slate-100 rounded-xl p-1">
+                        <div className="flex items-center gap-1.5 bg-slate-100 rounded-xl p-1">
+                          <button
+                            onClick={() => updateQuantity(item.nombre, item.precio, -1, item.opcion)}
+                            className="w-6 h-6 rounded-lg bg-white text-slate-700 hover:bg-red-50 hover:text-red-600 flex items-center justify-center font-bold shadow-xs transition-colors"
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span className="text-xs font-bold text-slate-800 min-w-[20px] text-center">
+                            {item.cantidad}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.nombre, item.precio, 1, item.opcion)}
+                            className="w-6 h-6 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+
                         <button
-                          onClick={() => updateQuantity(item.nombre, item.precio, -1, item.opcion)}
-                          className="w-6 h-6 rounded-lg bg-white text-slate-700 hover:bg-red-50 hover:text-red-600 flex items-center justify-center font-bold shadow-xs transition-colors"
+                          onClick={() => updateQuantity(item.nombre, item.precio, -item.cantidad, item.opcion)}
+                          className="text-slate-400 hover:text-red-500 p-1 transition-colors"
                         >
-                          <Minus size={12} />
-                        </button>
-                        <span className="text-xs font-bold text-slate-800 min-w-[18px] text-center">
-                          {item.cantidad}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.nombre, item.precio, 1, item.opcion)}
-                          className="w-6 h-6 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
-                        >
-                          <Plus size={12} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
-
-                      <button
-                        onClick={() => updateQuantity(item.nombre, item.precio, -item.cantidad, item.opcion)}
-                        className="text-slate-400 hover:text-red-500 p-1 transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
 
-                {/* Modalidad de Pedido */}
+                {/* Resumen del pedido */}
                 {cart.length > 0 && (
-                  <div className="pt-4 mt-2">
-                    <label className="text-xs font-bold text-slate-700 block mb-2">
-                      ¿Cómo deseas tu pedido?
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { id: 'delivery', label: '🛵 Delivery' },
-                        { id: 'llevar', label: '🛍️ Para Llevar' },
-                        { id: 'mesa', label: '🍽️ En Mesa' },
-                      ].map(type => (
-                        <button
-                          key={type.id}
-                          type="button"
-                          onClick={() => setOrderType(type.id as any)}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold transition-all border ${
-                            orderType === type.id
-                              ? 'bg-sky-50 border-[#0284C7] text-[#0284C7] shadow-xs'
-                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                          }`}
-                        >
-                          {type.label}
-                        </button>
-                      ))}
+                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 mt-3 space-y-1.5">
+                    <div className="flex justify-between text-xs text-slate-600">
+                      <span>Total de platos:</span>
+                      <span className="font-semibold text-slate-800">{cartCount} unidades</span>
                     </div>
-
-                    {/* Customer Inputs */}
-                    <div className="space-y-2 mt-3">
-                      <div>
-                        <input
-                          type="text"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder="Tu nombre completo (opcional)"
-                          className="w-full text-xs p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
-                        />
-                      </div>
-
-                      {orderType !== 'llevar' && (
-                        <div>
-                          <input
-                            type="text"
-                            value={customerAddress}
-                            onChange={(e) => setCustomerAddress(e.target.value)}
-                            placeholder={orderType === 'delivery' ? "Dirección de entrega y referencia" : "Número de mesa"}
-                            className="w-full text-xs p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
-                          />
-                        </div>
-                      )}
-
-                      <div>
-                        <input
-                          type="text"
-                          value={orderNotes}
-                          onChange={(e) => setOrderNotes(e.target.value)}
-                          placeholder="Notas (ej. sin picante, ají aparte, etc.)"
-                          className="w-full text-xs p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
-                        />
-                      </div>
+                    <div className="flex justify-between text-xs text-slate-600">
+                      <span>Estado:</span>
+                      <span className="font-semibold text-emerald-600">Listo para preparar</span>
+                    </div>
+                    <div className="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
+                      <span>Total a Pagar:</span>
+                      <span className="text-xl text-[#0369A1]">S/. {calculateTotal().toFixed(2)}</span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Total & WhatsApp Button */}
+              {/* Botón Continuar */}
               {cart.length > 0 && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100 space-y-3">
-                  <div className="flex items-center justify-between text-base font-black text-slate-800">
-                    <span>Total a Pagar:</span>
-                    <span className="text-xl text-[#0369A1]">
-                      S/. {calculateTotal().toFixed(2)}
-                    </span>
-                  </div>
-
+                <div className="p-4 bg-slate-50 border-t border-slate-100">
                   <button
-                    onClick={sendToWhatsApp}
-                    className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-98 transition-all"
+                    onClick={() => {
+                      setShowSummary(false);
+                      setShowCheckoutModal(true);
+                    }}
+                    className="w-full bg-gradient-to-r from-amber-500 via-[#F59E0B] to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-3.5 px-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-900/20 active:scale-98 transition-all"
                   >
-                    <span>📱 Enviar Pedido a WhatsApp</span>
+                    <span>Continuar con el Pedido</span>
+                    <ChevronRight size={18} />
                   </button>
                 </div>
               )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 🛵 MODAL DE CHECKOUT / FINALIZAR PEDIDO */}
+      <AnimatePresence>
+        {showCheckoutModal && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCheckoutModal(false)}
+              className="fixed inset-0 bg-black/65 backdrop-blur-xs"
+            />
+
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl z-10 max-h-[92vh] flex flex-col overflow-hidden"
+            >
+              {/* Header Checkout */}
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-[#0369A1] to-[#0284C7] text-white">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setShowCheckoutModal(false);
+                      setShowSummary(true);
+                    }}
+                    className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <div>
+                    <h3 className="font-bold text-base leading-tight">Completar Pedido</h3>
+                    <p className="text-[11px] text-sky-100">Total: S/. {calculateTotal().toFixed(2)} ({cartCount} platos)</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCheckoutModal(false)}
+                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Form Content */}
+              <div className="p-4 overflow-y-auto flex-1 space-y-4">
+                
+                {/* 1. Modalidad de Pedido */}
+                <div>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-2">
+                    1. ¿Cómo deseas tu pedido?
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setOrderType('delivery')}
+                      className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 text-center transition-all ${
+                        orderType === 'delivery'
+                          ? 'bg-sky-50/80 border-[#0284C7] text-[#0284C7] shadow-sm ring-1 ring-[#0284C7]'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="text-2xl">🛵</span>
+                      <span className="font-bold text-xs">Delivery a Domicilio</span>
+                      <span className="text-[10px] text-slate-400">Te lo llevamos caliente</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOrderType('tienda')}
+                      className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 text-center transition-all ${
+                        orderType === 'tienda'
+                          ? 'bg-sky-50/80 border-[#0284C7] text-[#0284C7] shadow-sm ring-1 ring-[#0284C7]'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="text-2xl">🏪</span>
+                      <span className="font-bold text-xs">Recoger en Tienda</span>
+                      <span className="text-[10px] text-slate-400">Pasan a recoger al local</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Datos del cliente según modalidad */}
+                <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+                    {orderType === 'delivery' ? '2. Datos de Entrega' : '2. Datos de Recojo'}
+                  </label>
+
+                  <div>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Tu nombre completo *"
+                      className="w-full text-xs p-2.5 bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                    />
+                  </div>
+
+                  <div>
+                    <input
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Teléfono / WhatsApp de contacto"
+                      className="w-full text-xs p-2.5 bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                    />
+                  </div>
+
+                  {orderType === 'delivery' ? (
+                    <>
+                      <div>
+                        <input
+                          type="text"
+                          value={customerAddress}
+                          onChange={(e) => setCustomerAddress(e.target.value)}
+                          placeholder="Dirección exacta y referencia (ej. Av. Grau 123, frente al parque) *"
+                          className="w-full text-xs p-2.5 bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                        />
+                      </div>
+
+                      {/* Botón GPS */}
+                      <button
+                        type="button"
+                        onClick={handleGetGpsLocation}
+                        disabled={isGettingLocation}
+                        className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                          customerGpsLocation
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                            : 'bg-white border-sky-300 text-sky-800 hover:bg-sky-50'
+                        }`}
+                      >
+                        {isGettingLocation ? (
+                          <>
+                            <Loader2 size={15} className="animate-spin text-[#0284C7]" />
+                            <span>Obteniendo ubicación GPS...</span>
+                          </>
+                        ) : customerGpsLocation ? (
+                          <>
+                            <CheckCircle2 size={15} className="text-emerald-600" />
+                            <span>📍 Ubicación GPS adjuntada</span>
+                            <span className="text-[10px] text-sky-600 underline ml-1">Actualizar</span>
+                          </>
+                        ) : (
+                          <>
+                            <MapPin size={15} className="text-[#0284C7]" />
+                            <span>📍 Adjuntar mi ubicación GPS actual (Opcional)</span>
+                          </>
+                        )}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+                      <MapPin size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">Dirección del Local:</p>
+                        <p className="text-[11px] text-amber-800">Av. Los Ficus 134 Independencia</p>
+                        <p className="text-[10px] text-amber-700 mt-0.5">¡Tu pedido estará listo y empacado para llevar!</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Método de Pago */}
+                <div>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-2">
+                    3. Método de Pago
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { id: 'yape', label: 'Yape', icon: '/icons/yape.svg', desc: 'Transferencia' },
+                      { id: 'visa', label: 'Visa', icon: '/icons/visa.svg', desc: 'Tarjeta' },
+                      { id: 'mastercard', label: 'Mastercard', icon: '/icons/mastercard.svg', desc: 'Tarjeta' },
+                      { id: 'efectivo', label: 'Efectivo', icon: '/icons/efectivo.svg', desc: 'Contraentrega' },
+                    ].map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setPaymentMethod(p.id as any)}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all text-center ${
+                          paymentMethod === p.id
+                            ? 'bg-sky-50 border-[#0284C7] ring-2 ring-[#0284C7]/20 shadow-xs'
+                            : 'bg-white border-slate-200 hover:bg-slate-50'
+                        }`}
+                      >
+                        <img src={p.icon} alt={p.label} className="w-8 h-8 object-contain rounded-md" />
+                        <span className="font-bold text-xs text-slate-800 leading-tight">{p.label}</span>
+                        <span className="text-[9px] text-slate-400">{p.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Notas adicionales */}
+                <div>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
+                    4. Indicaciones especiales (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    placeholder="Ej. Sin picante, ají aparte, pagar con billete de 100..."
+                    className="w-full text-xs p-2.5 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                  />
+                </div>
+
+              </div>
+
+              {/* Footer Checkout con Botón WhatsApp */}
+              <div className="p-4 bg-slate-50 border-t border-slate-100 space-y-2">
+                <div className="flex items-center justify-between text-sm font-bold text-slate-800">
+                  <span>Total Final:</span>
+                  <span className="text-xl font-black text-[#0369A1]">
+                    S/. {calculateTotal().toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={sendToWhatsApp}
+                  className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-3.5 px-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-98 transition-all text-sm"
+                >
+                  <span>📱 Enviar Pedido a WhatsApp</span>
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
