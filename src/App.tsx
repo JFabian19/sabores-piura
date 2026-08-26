@@ -3,11 +3,12 @@ import {
   ShoppingBag, Plus, Minus, ChevronRight, X, Trash2, Utensils, 
   MapPin, Loader2, Gift, Star, Phone, Sparkles, ZoomIn,
   Clock, Heart, Share2, CheckCircle2, ChevronLeft, BookOpen, Flame,
-  Layers, Check
+  Layers, Check, Image as ImageIcon, RefreshCw, AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { fetchSheetData, submitSheetData, SheetDish, SheetCategory, SHEET_ID } from './services/googleSheets';
 import { DEFAULT_MENU_DATA, Category, Dish, DishOption } from './data/menuData';
+import { autoAssignDishImages, AutoAssignResult } from './services/imageSearchService';
 
 // ==========================================
 // 📋 CONFIGURACIÓN DE SABORES DE PIURA
@@ -49,6 +50,12 @@ export default function App() {
   const [selectedDishForOptions, setSelectedDishForOptions] = useState<Dish | null>(null);
   const [optionQuantities, setOptionQuantities] = useState<{ [optionName: string]: number }>({});
 
+  // Estados para asignación automática de imágenes
+  const [showAutoAssignModal, setShowAutoAssignModal] = useState(false);
+  const [isAutoAssigning, setIsAutoAssigning] = useState(false);
+  const [autoAssignProgress, setAutoAssignProgress] = useState<{ processed: number; total: number; currentDish: string } | null>(null);
+  const [autoAssignResult, setAutoAssignResult] = useState<AutoAssignResult | null>(null);
+
   // Estado para visualizador de carta física original
   const [showPhysicalMenu, setShowPhysicalMenu] = useState(false);
   const [activePhysicalPage, setActivePhysicalPage] = useState(0);
@@ -81,9 +88,23 @@ export default function App() {
     comentario: ''
   });
 
-  // Cargar datos de Google Sheets si existe configuración
+  // Cargar datos persistidos o de Google Sheets / defecto
   useEffect(() => {
     const loadData = async () => {
+      // 1. Verificar si hay menú guardado en localStorage
+      const cached = localStorage.getItem('sabores_piura_menu_data');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCategories(parsed);
+            return;
+          }
+        } catch (e) {
+          console.error("Error cargando caché de menú:", e);
+        }
+      }
+
       if (!SHEET_ID) {
         setCategories(DEFAULT_MENU_DATA);
         return;
@@ -125,6 +146,26 @@ export default function App() {
 
     loadData();
   }, []);
+
+  const handleStartAutoAssign = async () => {
+    setShowAutoAssignModal(true);
+    setIsAutoAssigning(true);
+    setAutoAssignResult(null);
+
+    try {
+      const result = await autoAssignDishImages(categories, (processed, total, currentDish) => {
+        setAutoAssignProgress({ processed, total, currentDish });
+      });
+
+      setCategories(result.updatedCategories);
+      localStorage.setItem('sabores_piura_menu_data', JSON.stringify(result.updatedCategories));
+      setAutoAssignResult(result);
+    } catch (error) {
+      console.error("Error durante auto asignación:", error);
+    } finally {
+      setIsAutoAssigning(false);
+    }
+  };
 
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.cantidad, 0), [cart]);
 
@@ -398,11 +439,19 @@ export default function App() {
             {/* Top Interactive Buttons */}
             <div className="flex flex-wrap justify-center gap-2.5 mt-5">
               <button
+                onClick={handleStartAutoAssign}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-sky-900/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all border border-sky-300"
+              >
+                <Sparkles size={15} className="text-amber-300" />
+                <span>Buscar imágenes automáticamente</span>
+              </button>
+
+              <button
                 onClick={() => setShowPhysicalMenu(true)}
                 className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-900/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all border border-amber-300"
               >
                 <BookOpen size={16} />
-                <span>Ver Carta Física Original</span>
+                <span>Ver Carta Física</span>
               </button>
 
               <button
@@ -1334,6 +1383,151 @@ export default function App() {
                     {isSubmittingReview ? <Loader2 className="animate-spin" size={16} /> : <span>Enviar Calificación</span>}
                   </button>
                 </form>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 🤖 MODAL: ASIGNACIÓN AUTOMÁTICA DE IMÁGENES */}
+      <AnimatePresence>
+        {showAutoAssignModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isAutoAssigning && setShowAutoAssignModal(false)}
+              className="fixed inset-0 bg-black/75 backdrop-blur-xs"
+            />
+            
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl z-10 max-h-[90vh] flex flex-col overflow-hidden"
+            >
+              {!isAutoAssigning && (
+                <button
+                  onClick={() => setShowAutoAssignModal(false)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
+                >
+                  <X size={20} />
+                </button>
+              )}
+
+              <div className="text-center mb-4">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner ${
+                  isAutoAssigning ? 'bg-sky-100 text-[#0284C7]' : 'bg-emerald-100 text-emerald-600'
+                }`}>
+                  {isAutoAssigning ? (
+                    <RefreshCw size={28} className="animate-spin" />
+                  ) : (
+                    <CheckCircle2 size={32} />
+                  )}
+                </div>
+                <h3 className="text-lg font-black text-slate-800">
+                  {isAutoAssigning ? "Buscando Imágenes en Internet" : "¡Búsqueda y Asignación Completa!"}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {isAutoAssigning 
+                    ? "Escaneando nombres de platos y optimizando fotos para la carta digital..." 
+                    : "Los platos han sido actualizados con imágenes optimizadas."}
+                </p>
+              </div>
+
+              {/* Progress State */}
+              {isAutoAssigning && autoAssignProgress && (
+                <div className="my-4 space-y-3 bg-sky-50/70 p-4 rounded-2xl border border-sky-100">
+                  <div className="flex justify-between text-xs font-bold text-slate-700">
+                    <span>Progreso:</span>
+                    <span className="text-[#0284C7]">
+                      {autoAssignProgress.processed} / {autoAssignProgress.total} platos ({Math.round((autoAssignProgress.processed / autoAssignProgress.total) * 100)}%)
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="bg-gradient-to-r from-[#0284C7] to-amber-500 h-full rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(autoAssignProgress.processed / autoAssignProgress.total) * 100}%` }}
+                      transition={{ duration: 0.2 }}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-slate-600 truncate pt-1">
+                    <Loader2 size={14} className="animate-spin text-[#0284C7] flex-shrink-0" />
+                    <span className="truncate">Plato actual: <strong className="text-slate-800">{autoAssignProgress.currentDish}</strong></span>
+                  </div>
+                </div>
+              )}
+
+              {/* Completed Results Summary */}
+              {autoAssignResult && !isAutoAssigning && (
+                <div className="overflow-y-auto flex-1 space-y-4 my-2 pr-1">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
+                      <div className="text-base font-black text-emerald-700">{autoAssignResult.totalUpdated}</div>
+                      <div className="text-[11px] font-semibold text-emerald-800 leading-tight">Asignadas</div>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl text-center">
+                      <div className="text-base font-black text-slate-700">{autoAssignResult.totalSkipped}</div>
+                      <div className="text-[11px] font-semibold text-slate-600 leading-tight">Ya tenían foto</div>
+                    </div>
+                    <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center">
+                      <div className="text-base font-black text-amber-700">{autoAssignResult.totalErrors}</div>
+                      <div className="text-[11px] font-semibold text-amber-800 leading-tight">Sin imagen</div>
+                    </div>
+                  </div>
+
+                  {/* Logs list */}
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl p-2 bg-slate-50">
+                    {autoAssignResult.logs.map((log, idx) => (
+                      <div key={idx} className="pt-1.5 pb-1 flex items-center justify-between gap-2 text-xs">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          {log.imageUrl ? (
+                            <img src={log.imageUrl} alt={log.dishName} className="w-8 h-8 rounded-lg object-cover flex-shrink-0 border border-slate-200" />
+                          ) : (
+                            <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0">
+                              <ImageIcon size={14} />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-slate-800 truncate">{log.dishName}</p>
+                            <p className="text-[10px] text-slate-400 truncate">{log.categoryName}</p>
+                          </div>
+                        </div>
+
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md flex-shrink-0 ${
+                          log.status === 'updated' 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : log.status === 'skipped'
+                            ? 'bg-slate-200 text-slate-700'
+                            : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          {log.status === 'updated' ? 'Nueva' : log.status === 'skipped' ? 'Conservada' : 'Omitida'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2 flex gap-2">
+                    <button
+                      onClick={handleStartAutoAssign}
+                      className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <RefreshCw size={14} />
+                      <span>Volver a buscar</span>
+                    </button>
+                    <button
+                      onClick={() => setShowAutoAssignModal(false)}
+                      className="flex-1 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Check size={16} />
+                      <span>Ver Carta Actualizada</span>
+                    </button>
+                  </div>
+                </div>
               )}
             </motion.div>
           </div>
