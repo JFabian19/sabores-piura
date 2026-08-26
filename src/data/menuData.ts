@@ -36,7 +36,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 80.00",
         "destacado": true,
         "etiqueta": "Pescado Fino",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/ceviche-de-cabrillon.jpg",
         "opciones": [
           {
             "nombre": "Personal",
@@ -54,7 +54,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 55.00",
         "destacado": true,
         "etiqueta": "Pescado Fino",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/ceviche-de-corvina.jpg",
         "opciones": [
           {
             "nombre": "Personal",
@@ -72,7 +72,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Plato Estrella",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/ceviche-de-pescado-del-dia.jpg"
       },
       {
         "nombre": "Ceviche Mixto",
@@ -80,14 +80,14 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 30.00",
         "destacado": true,
         "etiqueta": "Favorito",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/ceviche-mixto.jpg"
       },
       {
         "nombre": "Ceviche de Caballa",
         "descripcion": "Tradicional y sabroso ceviche de caballa norteña con zarandaja fresca, camote, choclo y cebolla morada crujiente.",
         "precio": "S/. 30.00",
         "etiqueta": "Tradición Piurana",
-        "imagen": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/ceviche-de-caballa.jpg"
       },
       {
         "nombre": "Ceviche de Conchas Negras",
@@ -95,19 +95,19 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Especial",
-        "imagen": "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/ceviche-de-conchas-negras.jpg"
       },
       {
         "nombre": "Causa Acevichada",
         "descripcion": "Masa de papa amarilla prensada con ají amarillo y limón, rellena y coronada con un generoso ceviche fresco del día y salsa acevichada.",
         "precio": "S/. 18.00",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/causa-acevichada.jpg"
       },
       {
         "nombre": "Leche de Tigre",
         "descripcion": "Concentrado vigoroso de ceviche con trozos de pescado, mariscos crujientes, choclo desgranado y canchita norteña.",
         "precio": "S/. 18.00",
-        "imagen": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/leche-de-tigre.jpg"
       }
     ]
   },
@@ -123,7 +123,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 70.00",
         "destacado": true,
         "etiqueta": "Personal",
-        "imagen": "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/chicharron-de-calamar.jpg",
         "opciones": [
           {
             "nombre": "Personal",
@@ -136,20 +136,20 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "descripcion": "Trozos de pescado blanco marinados y fritos al punto crocante, acompañados de yucas doradas, salsa tártara y ensalada criolla norteña.",
         "precio": "S/. 25.00",
         "destacado": true,
-        "imagen": "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chicharron-de-pescado.jpg"
       },
       {
         "nombre": "Chicharrón Mixto",
         "descripcion": "Pescado y mariscos seleccionados (calamar, langostinos) rebozados y fritos, con yucas fritas y abundante salsa tártara casera.",
         "precio": "S/. 30.00",
-        "imagen": "https://images.unsplash.com/photo-1594998893017-36147cbcae05?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chicharron-mixto.jpg"
       },
       {
         "nombre": "Jalea de Cabrilla",
         "descripcion": "Cabrilla entera norteña frita bien crocante, cubierta de mixtura marina frita, yucas doradas, chifles y sarsa criolla.",
         "precio": "S/. 40.00",
         "etiqueta": "Recomendado",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/jalea-de-cabrilla.jpg"
       },
       {
         "nombre": "Jalea Mixta",
@@ -157,7 +157,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 45.00",
         "destacado": true,
         "etiqueta": "Para Compartir",
-        "imagen": "https://images.unsplash.com/photo-1594998893017-36147cbcae05?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/jalea-mixta.jpg"
       }
     ]
   },
@@ -173,25 +173,25 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Especialidad",
-        "imagen": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/arroz-con-mariscos.jpg"
       },
       {
         "nombre": "Chaufa de Pescado",
         "descripcion": "Arroz chaufa al wok estilo fusión norteña con trozos dorados de pescado fresco, cebollita china, huevo y aceite de ajonjolí.",
         "precio": "S/. 25.00",
-        "imagen": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chaufa-de-pescado.jpg"
       },
       {
         "nombre": "Chaufa de Mariscos",
         "descripcion": "Arroz salteado a fuego alto con variedad de mariscos frescos (calamar, langostino, pulpo), salsa de soya especial y pimientos.",
         "precio": "S/. 25.00",
-        "imagen": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chaufa-de-mariscos.jpg"
       },
       {
         "nombre": "Arroz con Tortilla de Mariscos",
         "descripcion": "Jugosa y esponjosa tortilla rellena de mariscos seleccionados, servida sobre una generosa cama de arroz norteño sazonado.",
         "precio": "S/. 20.00",
-        "imagen": "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/arroz-con-tortilla-de-mariscos.jpg"
       }
     ]
   },
@@ -207,7 +207,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/arroz-con-pato.jpg"
       },
       {
         "nombre": "Cabrito con Tamalito Verde",
@@ -215,7 +215,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cabrito-con-tamalito-verde.jpg"
       },
       {
         "nombre": "Seco de Chabelo",
@@ -223,49 +223,49 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Tradición Piurana",
-        "imagen": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/seco-de-chabelo.jpg"
       },
       {
         "nombre": "Majado de Yuca con Carne Aliñada",
         "descripcion": "Yuca fresca sancochada y majada con aderezo picantero, servida con sabrosa carne aliñada frita y sarsa criolla con zarandaja.",
         "precio": "S/. 25.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/majado-de-yuca-con-carne-alinada.jpg"
       },
       {
         "nombre": "Mallarabia",
         "descripcion": "Potaje tradicional piurano: majado de plátano maduro con queso fresco norteño, arroz blanco, frejol bayo y pescado en sudado.",
         "precio": "S/. 28.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/mallarabia.jpg"
       },
       {
         "nombre": "Carne Seca con Chifles",
         "descripcion": "Clásica carne cecina seca piurana frita al punto crocante, servida con abundante porción de chifles piuranos artesanales y salsa criolla.",
         "precio": "S/. 25.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/carne-seca-con-chifles.jpg"
       },
       {
         "nombre": "Chanchito con Patacones",
         "descripcion": "Crocantes y tiernos trozos de chancho dorado acompañados de patacones de plátano verde recién fritos y salsa criolla.",
         "precio": "S/. 25.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chanchito-con-patacones.jpg"
       },
       {
         "nombre": "Frito Piurano",
         "descripcion": "Costilla de cerdo adobada con achiote, ají panca y especias norteñas, servida con arroz amarillo, tamal y salsa criolla.",
         "precio": "S/. 25.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/frito-piurano.jpg"
       },
       {
         "nombre": "Toyito",
         "descripcion": "Delicioso toyito guisado con aderezo picantero tradicional de Piura, servido con arroz blanco, menestra y sarsa.",
         "precio": "S/. 20.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/toyito.jpg"
       },
       {
         "nombre": "Ronda Criolla",
@@ -273,7 +273,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 85.00",
         "destacado": true,
         "etiqueta": "Para 3 a 4 Personas",
-        "imagen": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/ronda-criolla.jpg"
       }
     ]
   },
@@ -287,32 +287,32 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "nombre": "Cachema Frita",
         "descripcion": "Cachema entera fresca de la costa norteña, frita bien dorada y crocante, servida con yucas, chifles y salsa criolla.",
         "precio": "S/. 25.00",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cachema-frita.jpg"
       },
       {
         "nombre": "Cabrilla Frita",
         "descripcion": "Cabrilla entera norteña frita a la perfección con piel crujiente y carne tierna, con yucas sancochadas, chifles y sarsa.",
         "precio": "S/. 35.00",
         "destacado": true,
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cabrilla-frita.jpg"
       },
       {
         "nombre": "Cachema Encebollada",
         "descripcion": "Cachema frita bañada con generoso salteado criollo de cebollas, tomates jugosos, ají amarillo y culantro fresco.",
         "precio": "S/. 30.00",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cachema-encebollada.jpg"
       },
       {
         "nombre": "Filete de Pescado",
         "descripcion": "Filete de pescado fresco dorado a la plancha o frito, servido con arroz blanco, papas doradas o yucas y ensalada fresca.",
         "precio": "S/. 25.00",
-        "imagen": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/filete-de-pescado.jpg"
       },
       {
         "nombre": "Caballa Frita",
         "descripcion": "Caballa entera frita y dorada con auténtica zarandaja piurana, chifles crocantes y ensalada criolla.",
         "precio": "S/. 35.00",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/caballa-frita.jpg"
       }
     ]
   },
@@ -328,7 +328,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 90.00",
         "destacado": true,
         "etiqueta": "Especialidad",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/sudado-de-cabrillon.jpg",
         "opciones": [
           {
             "nombre": "Personal",
@@ -346,7 +346,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 70.00",
         "destacado": true,
         "etiqueta": "Pescado Fino",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/sudado-de-corvina.jpg",
         "opciones": [
           {
             "nombre": "Personal",
@@ -364,26 +364,26 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 35.00",
         "destacado": true,
         "etiqueta": "Recomendado",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/sudado-de-cabrilla.jpg"
       },
       {
         "nombre": "Sudado de Cachema",
         "descripcion": "Cachema entera cocinada en caldo concentrado con chicha de jora, ají mirasol, culantro y yuca.",
         "precio": "S/. 30.00",
         "destacado": true,
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/sudado-de-cachema.jpg"
       },
       {
         "nombre": "Sudado de Filete",
         "descripcion": "Filete de pescado cocinado en su propio jugo con chicha de jora, tomate, cebolla, ají amarillo, culantro y yuca sancochada.",
         "precio": "S/. 30.00",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/sudado-de-filete.jpg"
       },
       {
         "nombre": "Sudado de Caballa",
         "descripcion": "Caballa fresca sudada con aderezo norteño, chicha de jora, cebolla en gajos, tomate y yucas tiernas.",
         "precio": "S/. 30.00",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/sudado-de-caballa.jpg"
       }
     ]
   },
@@ -399,13 +399,13 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 40.00",
         "destacado": true,
         "etiqueta": "Levanta Muertos",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/parihuela-de-cabrilla.jpg"
       },
       {
         "nombre": "Parihuela de Filete",
         "descripcion": "Sustancioso caldo marino a base de filete de pescado, mixtura de mariscos, cangrejo, chicha de jora y ajíes peruanos.",
         "precio": "S/. 30.00",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/parihuela-de-filete.jpg"
       }
     ]
   },
@@ -421,7 +421,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Super Promo",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/duo-marino-ceviche-arroz-con-mariscos.jpg"
       },
       {
         "nombre": "Dúo Marino: Ceviche + Chicharrón de Pescado",
@@ -429,14 +429,14 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 25.00",
         "destacado": true,
         "etiqueta": "Super Promo",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/duo-marino-ceviche-chicharron-de-pescado.jpg"
       },
       {
         "nombre": "Dúo Marino: Ceviche + Chaufa de Mariscos",
         "descripcion": "Ceviche tradicional de pescado acompañado de sabroso arroz chaufa de mariscos salteado al fuego vivo.",
         "precio": "S/. 25.00",
         "etiqueta": "Super Promo",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/duo-marino-ceviche-chaufa-de-mariscos.jpg"
       }
     ]
   },
@@ -452,7 +452,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 30.00",
         "destacado": true,
         "etiqueta": "El Más Pedido",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/trio-marino-ceviche-chicharron-arroz-con-mariscos.jpg"
       },
       {
         "nombre": "Trío Marino: Ceviche + Chicharrón + Chaufa con Mariscos",
@@ -460,7 +460,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 30.00",
         "destacado": true,
         "etiqueta": "El Más Pedido",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/trio-marino-ceviche-chicharron-chaufa-con-mariscos.jpg"
       }
     ]
   },
@@ -476,7 +476,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 12.00",
         "destacado": true,
         "etiqueta": "Combo Niños",
-        "imagen": "https://images.unsplash.com/photo-1562967914-608f82629710?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/combo-ninos-nuggets-papas-fritas.jpg"
       },
       {
         "nombre": "Arroz a la Cubana",
@@ -484,7 +484,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 12.00",
         "destacado": true,
         "etiqueta": "Favorito Niños",
-        "imagen": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/arroz-a-la-cubana.jpg"
       }
     ]
   },
@@ -499,21 +499,21 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "descripcion": "Gran fuente mediana de ceviche de pescado del día con abundante camote, choclo desgranado y canchita chulpi.",
         "precio": "S/. 45.00",
         "etiqueta": "Fuente Mediana",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-mediana-ceviche-de-pescado.jpg"
       },
       {
         "nombre": "Fuente Mediana: Ceviche de Caballa",
         "descripcion": "Fuente mediana con abundante ceviche de caballa norteña, zarandaja y camote glaseado.",
         "precio": "S/. 45.00",
         "etiqueta": "Fuente Mediana",
-        "imagen": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-mediana-ceviche-de-caballa.jpg"
       },
       {
         "nombre": "Fuente Mediana: Ceviche Mixto",
         "descripcion": "Fuente mediana de ceviche mixto con pescado y variedad de mariscos frescos al limón norteño.",
         "precio": "S/. 45.00",
         "etiqueta": "Fuente Mediana",
-        "imagen": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-mediana-ceviche-mixto.jpg"
       },
       {
         "nombre": "Fuente Mediana: Jalea Mixta",
@@ -521,7 +521,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 45.00",
         "destacado": true,
         "etiqueta": "Fuente Mediana",
-        "imagen": "https://images.unsplash.com/photo-1594998893017-36147cbcae05?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-mediana-jalea-mixta.jpg"
       },
       {
         "nombre": "Fuente Grande: Sudado de Pescado",
@@ -529,7 +529,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 70.00",
         "destacado": true,
         "etiqueta": "Fuente Grande",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-grande-sudado-de-pescado.jpg"
       },
       {
         "nombre": "Fuente Grande: Parihuelas",
