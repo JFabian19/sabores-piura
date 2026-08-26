@@ -588,8 +588,8 @@ export default function App() {
                 <div className="h-1 w-16 bg-gradient-to-r from-amber-400 to-[#0284C7] rounded-full mt-2 ml-8"></div>
               </div>
 
-              {/* Dish Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Dish Cards Grid - 2 Columnas */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {category.items.map((dish, idx) => {
                   const hasMultipleOptions = Boolean(dish.opciones && dish.opciones.length > 1);
                   const totalQty = getDishTotalQuantity(dish);
@@ -600,131 +600,144 @@ export default function App() {
                       initial={{ opacity: 0, y: 15 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-40px" }}
-                      transition={{ duration: 0.3, delay: idx * 0.04 }}
-                      className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 flex flex-col justify-between relative group hover:border-sky-200"
+                      transition={{ duration: 0.3, delay: idx * 0.03 }}
+                      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 flex flex-col justify-between relative group hover:border-sky-200"
                     >
                       {/* Badge if available */}
                       {dish.etiqueta && (
-                        <div className="absolute -top-2.5 left-4 z-10">
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 ${
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 backdrop-blur-md ${
                             dish.etiqueta.includes('Sábado') 
-                              ? 'bg-amber-100 text-amber-900 border border-amber-300' 
+                              ? 'bg-amber-500/90 text-white border border-amber-300' 
                               : dish.etiqueta.includes('Tradición')
-                              ? 'bg-orange-100 text-orange-900 border border-orange-300'
-                              : 'bg-sky-100 text-sky-900 border border-sky-300'
+                              ? 'bg-orange-500/90 text-white border border-orange-300'
+                              : 'bg-sky-600/90 text-white border border-sky-300'
                           }`}>
-                            <Sparkles size={10} className="text-amber-500" />
+                            <Sparkles size={10} className="text-yellow-200" />
                             {dish.etiqueta}
                           </span>
                         </div>
                       )}
 
-                      <div className="flex gap-3.5 items-start">
-                        {/* Dish Details */}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-slate-900 text-base group-hover:text-[#0284C7] transition-colors leading-snug">
-                            {dish.nombre}
-                          </h3>
-
-                          {dish.descripcion && (
-                            <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
-                              {dish.descripcion}
-                            </p>
-                          )}
-
-                          {/* Options pills preview if dish has multiple options */}
-                          {hasMultipleOptions && dish.opciones && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              {dish.opciones.map((opt, oIdx) => (
-                                <button
-                                  key={oIdx}
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleOpenOptionsModal(dish);
-                                  }}
-                                  className="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-800 font-semibold px-2 py-0.5 rounded-lg border border-sky-200 cursor-pointer transition-colors text-left"
-                                >
-                                  {opt.nombre}: <span className="font-bold text-[#0369A1]">{opt.precio}</span>
-                                </button>
-                              ))}
-                            </div>
-                          )}
-
-                          <div className="mt-2.5 flex items-baseline gap-2">
-                            <span className="text-lg font-black text-[#0369A1] font-dish">
-                              {hasMultipleOptions ? `Desde ${dish.opciones![0].precio}` : dish.precio}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Dish Image */}
-                        {dish.imagen && (
-                          <div 
-                            onClick={() => setSelectedImage({ src: dish.imagen!, title: dish.nombre })}
-                            className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer group/img shadow-inner bg-slate-100"
-                          >
+                      {/* 1. IMAGEN CUADRADA SUPERIOR */}
+                      <div 
+                        onClick={() => dish.imagen && setSelectedImage({ src: dish.imagen, title: dish.nombre })}
+                        className="relative w-full aspect-square overflow-hidden cursor-pointer group/img bg-slate-100"
+                      >
+                        {dish.imagen ? (
+                          <>
                             <img
                               src={dish.imagen}
                               alt={dish.nombre}
                               loading="lazy"
-                              className="w-full h-full object-cover transform group-hover/img:scale-110 transition-transform duration-500"
+                              className="w-full h-full object-cover transform group-hover/img:scale-105 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                              <ZoomIn size={18} className="text-white drop-shadow" />
+                              <ZoomIn size={22} className="text-white drop-shadow-md" />
                             </div>
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-50">
+                            <Utensils size={32} />
+                            <span className="text-[10px] mt-1 font-medium text-slate-400">Sabores de Piura</span>
                           </div>
                         )}
                       </div>
 
-                      {/* Action Buttons / Add to Cart */}
-                      <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span className="text-[11px] text-slate-400 font-medium">
-                          {dish.destacado ? '⭐ Muy solicitado' : (hasMultipleOptions ? 'Porciones a elegir' : 'Sabor del norte')}
-                        </span>
+                      {/* CONTENIDO DEL PLATO */}
+                      <div className="p-3 sm:p-3.5 flex flex-col flex-1 justify-between">
+                        <div>
+                          {/* 2. NOMBRE DEL PLATO */}
+                          <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#0284C7] transition-colors leading-snug line-clamp-2">
+                            {dish.nombre}
+                          </h3>
 
-                        {hasMultipleOptions ? (
-                          <div className="flex items-center gap-2">
-                            {totalQty > 0 && (
-                              <span className="text-xs font-black text-[#0284C7] bg-sky-50 px-2 py-1 rounded-lg border border-sky-200">
-                                {totalQty} en pedido
+                          {/* 3. DESCRIPCIÓN (si tiene) */}
+                          {dish.descripcion && (
+                            <p className="text-[11px] sm:text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                              {dish.descripcion}
+                            </p>
+                          )}
+
+                          {/* 4. ESPACIO PARA SELECCIÓN DE PRECIOS/OPCIONES SI TIENE VARIOS */}
+                          {hasMultipleOptions && dish.opciones && (
+                            <div className="mt-2.5 pt-2 border-t border-slate-100">
+                              <span className="text-[10px] font-semibold text-slate-400 block mb-1">
+                                Opciones disponibles:
                               </span>
-                            )}
-                            <button
-                              onClick={() => handleOpenOptionsModal(dish)}
-                              className="flex items-center gap-1.5 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
-                            >
-                              <Plus size={14} />
-                              <span>{totalQty > 0 ? 'Modificar / +' : 'Elegir opción'}</span>
-                            </button>
-                          </div>
-                        ) : totalQty > 0 ? (
-                          <div className="flex items-center gap-2 bg-sky-50 border border-sky-200 rounded-xl p-1 shadow-sm">
-                            <button
-                              onClick={() => updateQuantity(dish.nombre, (dish.opciones?.[0]?.precio || dish.precio), -1, dish.opciones?.[0]?.nombre)}
-                              className="w-7 h-7 rounded-lg bg-white text-[#0284C7] hover:bg-sky-100 flex items-center justify-center font-bold shadow-xs transition-colors"
-                            >
-                              <Minus size={14} />
-                            </button>
-                            <span className="text-sm font-bold text-[#0369A1] min-w-[20px] text-center">
-                              {totalQty}
+                              <div className="flex flex-wrap gap-1">
+                                {dish.opciones.map((opt, oIdx) => (
+                                  <button
+                                    key={oIdx}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenOptionsModal(dish);
+                                    }}
+                                    className="text-[10px] sm:text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-800 font-medium px-2 py-0.5 rounded-md border border-sky-200 cursor-pointer transition-colors text-left"
+                                  >
+                                    <span className="text-slate-600">{opt.nombre}:</span> <strong className="text-[#0369A1]">{opt.precio}</strong>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 5. PRECIO + BOTÓN DE AGREGAR */}
+                        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-slate-400 font-medium leading-none mb-0.5">
+                              {hasMultipleOptions ? 'Desde' : 'Precio'}
                             </span>
+                            <span className="text-sm sm:text-base font-black text-[#0369A1] font-dish leading-tight">
+                              {hasMultipleOptions ? dish.opciones![0].precio : dish.precio}
+                            </span>
+                          </div>
+
+                          {hasMultipleOptions ? (
+                            <div className="flex items-center gap-1">
+                              {totalQty > 0 && (
+                                <span className="text-[11px] font-bold text-[#0284C7] bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200">
+                                  {totalQty}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => handleOpenOptionsModal(dish)}
+                                className="flex items-center gap-1 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
+                              >
+                                <Plus size={13} />
+                                <span>{totalQty > 0 ? 'Modificar' : 'Elegir'}</span>
+                              </button>
+                            </div>
+                          ) : totalQty > 0 ? (
+                            <div className="flex items-center gap-1 bg-sky-50 border border-sky-200 rounded-xl p-0.5 shadow-sm">
+                              <button
+                                onClick={() => updateQuantity(dish.nombre, (dish.opciones?.[0]?.precio || dish.precio), -1, dish.opciones?.[0]?.nombre)}
+                                className="w-6 h-6 rounded-lg bg-white text-[#0284C7] hover:bg-sky-100 flex items-center justify-center font-bold shadow-xs transition-colors"
+                              >
+                                <Minus size={12} />
+                              </button>
+                              <span className="text-xs font-bold text-[#0369A1] min-w-[16px] text-center">
+                                {totalQty}
+                              </span>
+                              <button
+                                onClick={() => addToCart(dish)}
+                                className="w-6 h-6 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
+                              >
+                                <Plus size={12} />
+                              </button>
+                            </div>
+                          ) : (
                             <button
                               onClick={() => addToCart(dish)}
-                              className="w-7 h-7 rounded-lg bg-[#0284C7] text-white hover:bg-[#0369A1] flex items-center justify-center font-bold shadow-xs transition-colors"
+                              className="flex items-center gap-1 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
                             >
-                              <Plus size={14} />
+                              <Plus size={13} />
+                              <span>Agregar</span>
                             </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => addToCart(dish)}
-                            className="flex items-center gap-1.5 bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
-                          >
-                            <Plus size={14} />
-                            <span>Agregar</span>
-                          </button>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                   );

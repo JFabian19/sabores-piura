@@ -536,14 +536,14 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "descripcion": "Fuente grande de reconfortante parihuela marina con pescado y mariscos para toda la mesa.",
         "precio": "S/. 70.00",
         "etiqueta": "Fuente Grande",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-grande-parihuelas.jpg"
       },
       {
         "nombre": "Fuente Grande: Chaufa de Mariscos",
         "descripcion": "Gran fuente familiar de arroz chaufa salteado al wok con generosos mariscos frescos.",
         "precio": "S/. 70.00",
         "etiqueta": "Fuente Grande",
-        "imagen": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-grande-chaufa-de-mariscos.jpg"
       },
       {
         "nombre": "Fuente Grande: Arroz con Mariscos",
@@ -551,7 +551,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 70.00",
         "destacado": true,
         "etiqueta": "Fuente Grande",
-        "imagen": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/fuente-grande-arroz-con-mariscos.jpg"
       }
     ]
   },
@@ -566,13 +566,13 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "descripcion": "Auténtica receta piurana: caballa fresca pasada suavemente por agua caliente aromatizada con hierbas, servida con yucas, zarandaja, limón y ají.",
         "precio": "S/. 35.00",
         "etiqueta": "Picantero",
-        "imagen": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/pasadito-de-caballa-por-agua.jpg"
       },
       {
         "nombre": "Pasadito de Cabrilla",
         "descripcion": "Cabrilla fresca cocinada suavemente al vapor aromatizado, acompañada de yuca cocida, salsa de cebolla con limón y ají limo.",
         "precio": "S/. 35.00",
-        "imagen": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/pasadito-de-cabrilla.jpg"
       }
     ]
   },
@@ -588,14 +588,14 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 16.00",
         "destacado": true,
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/caldo-de-gallina.jpg"
       },
       {
         "nombre": "Caldo de Pata",
         "descripcion": "Tradicional y nutritivo caldo de pata de res con mote tierno, hierbabuena y aderezo especial de la casa.",
         "precio": "S/. 20.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/caldo-de-pata.jpg"
       }
     ]
   },
@@ -611,39 +611,39 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 22.00",
         "destacado": true,
         "etiqueta": "Clásico",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/lomo-saltado.jpg"
       },
       {
         "nombre": "Saltado de Pollo",
         "descripcion": "Trocitos de pechuga de pollo salteados al fuego vivo con cebolla, tomate, ají amarillo, papas fritas doradas y arroz blanco.",
         "precio": "S/. 18.00",
-        "imagen": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/saltado-de-pollo.jpg"
       },
       {
         "nombre": "Pechuga a la Plancha",
         "descripcion": "Jugosa pechuga de pollo marinada y dorada a la plancha, servida con papas fritas o arroz y ensalada fresca.",
         "precio": "S/. 18.00",
-        "imagen": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/pechuga-a-la-plancha.jpg"
       },
       {
         "nombre": "Chicharrón de Pollo",
         "descripcion": "Crocantes trozos de pollo rebozados y sazonados con especias criollas, acompañados de papas fritas y cremas de la casa.",
         "precio": "S/. 20.00",
-        "imagen": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chicharron-de-pollo.jpg"
       },
       {
         "nombre": "Trucha Frita (Sábado y Domingo)",
         "descripcion": "Trucha fresca entera frita bien dorada y crocante, servida con papas doradas, arroz blanco y ensalada fresca.",
         "precio": "S/. 28.00",
         "etiqueta": "Sábados y Domingos",
-        "imagen": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/trucha-frita-sabado-y-domingo.jpg"
       },
       {
         "nombre": "Cuy Chactado (Medio)",
         "descripcion": "Medio cuy frito a la piedra bien crocante y dorado, servido con papas doradas andinas, maíz y salsa criolla.",
         "precio": "S/. 35.00",
         "etiqueta": "Especialidad Andina",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cuy-chactado-medio.jpg"
       },
       {
         "nombre": "Cuy Chactado (Entero)",
@@ -651,19 +651,19 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 70.00",
         "destacado": true,
         "etiqueta": "Especialidad",
-        "imagen": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cuy-chactado-entero.jpg"
       },
       {
         "nombre": "Pollada",
         "descripcion": "Generosa presa de pollo macerada en ají panca, chicha y condimentos criollos, frita al punto con papa cocida y ensalada.",
         "precio": "S/. 20.00",
-        "imagen": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/pollada.jpg"
       },
       {
         "nombre": "Parrilla",
         "descripcion": "Sabrosos cortes de carne sazonados a la parrilla con aroma ahumado, servidos con papas fritas doradas y ensalada criolla.",
         "precio": "S/. 22.00",
-        "imagen": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/parrilla.jpg"
       }
     ]
   },
@@ -679,7 +679,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 5.00",
         "destacado": true,
         "etiqueta": "Variedad",
-        "imagen": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80",
+        "imagen": "/platos/gaseosa-descartable.jpg",
         "opciones": [
           {
             "nombre": "1/2 Litro (500ml)",
@@ -701,7 +701,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 10.00",
         "destacado": true,
         "etiqueta": "Casera",
-        "imagen": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chicha-morada-de-maiz-1-lt.jpg"
       },
       {
         "nombre": "Chicha de Jora Piurana 1 Lt.",
@@ -709,7 +709,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 10.00",
         "destacado": true,
         "etiqueta": "Tradición Piurana",
-        "imagen": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/chicha-de-jora-piurana-1-lt.jpg"
       },
       {
         "nombre": "Clarito Helado 1 Lt.",
@@ -717,25 +717,25 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "precio": "S/. 10.00",
         "destacado": true,
         "etiqueta": "Típico de Piura",
-        "imagen": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/clarito-helado-1-lt.jpg"
       },
       {
         "nombre": "Cerveza Pilsen",
         "descripcion": "Botella de Cerveza Pilsen Callao bien helada (630ml / personal), ideal para acompañar tus platos marinos.",
         "precio": "S/. 9.00",
-        "imagen": "https://images.unsplash.com/photo-1608270174093-16a75066a506?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cerveza-pilsen.jpg"
       },
       {
         "nombre": "Cerveza Cristal",
         "descripcion": "Botella de Cerveza Cristal heladita al polo para compartir con tus platos criollos y marinos.",
         "precio": "S/. 8.50",
-        "imagen": "https://images.unsplash.com/photo-1608270174093-16a75066a506?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/cerveza-cristal.jpg"
       },
       {
         "nombre": "Agua Mineral",
         "descripcion": "Botella de agua mineral con o sin gas de 500ml bien fresca.",
         "precio": "S/. 2.00",
-        "imagen": "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=600&auto=format&fit=crop&q=80"
+        "imagen": "/platos/agua-mineral.jpg"
       }
     ]
   }
