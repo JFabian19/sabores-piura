@@ -86,6 +86,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "nombre": "Ceviche de Caballa",
         "descripcion": "Tradicional y sabroso ceviche de caballa norteña con zarandaja fresca, camote, choclo y cebolla morada crujiente.",
         "precio": "S/. 30.00",
+        "destacado": true,
         "etiqueta": "Tradición Piurana",
         "imagen": "/platos/ceviche-de-caballa.webp"
       },
@@ -203,7 +204,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
     "id": "piura-tradicion",
     "nombre": "Piura Tradición",
     "icono": "🏺",
-    "subtitulo": "Sábados y Domingos • La auténtica sazón de nuestras raíces piuranas",
+    "subtitulo": "La auténtica sazón y tradición de nuestras raíces piuranas",
     "items": [
       {
         "nombre": "Arroz con Pato",
@@ -251,11 +252,12 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "imagen": "/platos/carne-seca-con-chifles.webp"
       },
       {
-        "nombre": "Chanchito con Patacones",
-        "descripcion": "Crocantes y tiernos trozos de chancho dorado acompañados de patacones de plátano verde recién fritos y salsa criolla.",
+        "nombre": "Chicharrón de Cerdo con Patacones",
+        "descripcion": "Crocantes y tiernos trozos de chicharrón de cerdo dorado acompañados de patacones de plátano verde recién fritos y sarsa criolla.",
         "precio": "S/. 25.00",
-        "etiqueta": "Sábados y Domingos",
-        "imagen": "/platos/chanchito-con-patacones.webp"
+        "destacado": true,
+        "etiqueta": "Todos los días",
+        "imagen": "/platos/chicharron-de-cerdo-con-patacones.webp"
       },
       {
         "nombre": "Frito Piurano",
@@ -265,10 +267,11 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "imagen": "/platos/frito-piurano.webp"
       },
       {
-        "nombre": "Toyito",
-        "descripcion": "Delicioso toyito guisado con aderezo picantero tradicional de Piura, servido con arroz blanco, menestra y sarsa.",
+        "nombre": "Toyito Aliñado",
+        "descripcion": "Delicioso toyito aliñado guisado con aderezo picantero tradicional de Piura, servido con arroz blanco, menestra y sarsa.",
         "precio": "S/. 20.00",
-        "etiqueta": "Sábados y Domingos",
+        "destacado": true,
+        "etiqueta": "Todos los días",
         "imagen": "/platos/toyito.webp"
       },
       {
@@ -310,6 +313,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "nombre": "Filete de Pescado",
         "descripcion": "Filete de pescado fresco dorado a la plancha o frito, servido con arroz blanco, papas doradas o yucas y ensalada fresca.",
         "precio": "S/. 25.00",
+        "destacado": true,
         "imagen": "/platos/filete-de-pescado.webp"
       }
     ]
@@ -381,6 +385,8 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "nombre": "Sudado de Caballa",
         "descripcion": "Caballa fresca sudada con aderezo norteño, chicha de jora, cebolla en gajos, tomate y yucas tiernas.",
         "precio": "S/. 30.00",
+        "destacado": true,
+        "etiqueta": "Tradición Piurana",
         "imagen": "/platos/sudado-de-caballa.webp"
       }
     ]
@@ -424,7 +430,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
       {
         "nombre": "Dúo Marino: Ceviche + Chicharrón de Pescado",
         "descripcion": "Fresco ceviche de pescado del día servido junto a crujientes chicharrones de pescado con tártara y yucas fritas.",
-        "precio": "S/. 25.00",
+        "precio": "S/. 30.00",
         "destacado": true,
         "etiqueta": "Super Promo",
         "imagen": "/platos/duo-marino-ceviche-chicharron-de-pescado.webp"
@@ -557,19 +563,22 @@ export const DEFAULT_MENU_DATA: Category[] = [
     "id": "pasaditos",
     "nombre": "Pasaditos",
     "icono": "🌊",
-    "subtitulo": "Especialidad tradicional de la costa de Piura",
+    "subtitulo": "Especialidad tradicional y milenaria de la costa de Piura",
     "items": [
       {
-        "nombre": "Pasadito de Caballa por Agua",
-        "descripcion": "Auténtica receta piurana: caballa fresca pasada suavemente por agua caliente aromatizada con hierbas, servida con yucas, zarandaja, limón y ají.",
+        "nombre": "Pasadito de Caballa por Agua con Sarsa Criolla y Yuca",
+        "descripcion": "Auténtica receta piurana: caballa entera fresca pasada por agua caliente aromatizada con hierbas, servida con abundante sarsa criolla, yuca, camote y zarandaja.",
         "precio": "S/. 35.00",
-        "etiqueta": "Picantero",
+        "destacado": true,
+        "etiqueta": "Especialidad Piurana",
         "imagen": "/platos/pasadito-de-caballa-por-agua.webp"
       },
       {
-        "nombre": "Pasadito de Cabrilla",
-        "descripcion": "Cabrilla fresca cocinada suavemente al vapor aromatizado, acompañada de yuca cocida, salsa de cebolla con limón y ají limo.",
+        "nombre": "Pasadito de Cabrilla por Agua con Yuca y Sarsa",
+        "descripcion": "Cabrilla fresca pasada suavemente por agua caliente aromatizada al estilo norteño, servida con yucas tiernas, camote y crujiente sarsa criolla con zarandaja.",
         "precio": "S/. 35.00",
+        "destacado": true,
+        "etiqueta": "Especialidad Piurana",
         "imagen": "/platos/pasadito-de-cabrilla.webp"
       }
     ]

@@ -104,7 +104,7 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       // 1. Verificar si hay menú guardado en localStorage
-      const cached = localStorage.getItem('sabores_piura_menu_data_v3');
+      const cached = localStorage.getItem('sabores_piura_menu_data_v4');
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
@@ -170,7 +170,7 @@ export default function App() {
       });
 
       setCategories(result.updatedCategories);
-      localStorage.setItem('sabores_piura_menu_data_v3', JSON.stringify(result.updatedCategories));
+      localStorage.setItem('sabores_piura_menu_data_v4', JSON.stringify(result.updatedCategories));
       setAutoAssignResult(result);
     } catch (error) {
       console.error("Error durante auto asignación:", error);
