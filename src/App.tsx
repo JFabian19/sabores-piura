@@ -104,7 +104,7 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       // 1. Verificar si hay menú guardado en localStorage
-      const cached = localStorage.getItem('sabores_piura_menu_data');
+      const cached = localStorage.getItem('sabores_piura_menu_data_v3');
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
@@ -170,7 +170,7 @@ export default function App() {
       });
 
       setCategories(result.updatedCategories);
-      localStorage.setItem('sabores_piura_menu_data', JSON.stringify(result.updatedCategories));
+      localStorage.setItem('sabores_piura_menu_data_v3', JSON.stringify(result.updatedCategories));
       setAutoAssignResult(result);
     } catch (error) {
       console.error("Error durante auto asignación:", error);
@@ -612,7 +612,7 @@ export default function App() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-40px" }}
                       transition={{ duration: 0.3, delay: idx * 0.03 }}
-                      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 flex flex-col justify-between relative group hover:border-sky-200"
+                      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 flex flex-col justify-between relative group hover:border-sky-200 h-full"
                     >
                       {/* Badge if available */}
                       {dish.etiqueta && (
@@ -660,15 +660,15 @@ export default function App() {
 
                       {/* CONTENIDO DEL PLATO */}
                       <div className="p-3 sm:p-3.5 flex flex-col flex-1 justify-between">
-                        <div>
+                        <div className="flex-1">
                           {/* 2. NOMBRE DEL PLATO */}
-                          <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#0284C7] transition-colors leading-snug line-clamp-2">
+                          <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#0284C7] transition-colors leading-snug">
                             {dish.nombre}
                           </h3>
 
-                          {/* 3. DESCRIPCIÓN (si tiene) */}
+                          {/* 3. DESCRIPCIÓN COMPLETA */}
                           {dish.descripcion && (
-                            <p className="text-[11px] sm:text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                            <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-relaxed">
                               {dish.descripcion}
                             </p>
                           )}
@@ -699,7 +699,7 @@ export default function App() {
                         </div>
 
                         {/* 5. PRECIO + BOTÓN DE AGREGAR */}
-                        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-auto">
                           <div className="flex flex-col">
                             <span className="text-[10px] text-slate-400 font-medium leading-none mb-0.5">
                               {hasMultipleOptions ? 'Desde' : 'Precio'}
