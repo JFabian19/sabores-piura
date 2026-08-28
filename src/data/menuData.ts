@@ -234,7 +234,7 @@ export const DEFAULT_MENU_DATA: Category[] = [
         "nombre": "Majado de Yuca con Carne Aliñada",
         "descripcion": "Yuca fresca sancochada y majada con aderezo picantero, servida con sabrosa carne aliñada frita y sarsa criolla con zarandaja.",
         "precio": "S/. 25.00",
-        "etiqueta": "Sábados y Domingos",
+        "etiqueta": "Todos los días",
         "imagen": "/platos/majado-de-yuca-con-carne-alinada.webp"
       },
       {
